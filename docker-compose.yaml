@@ -1,0 +1,25 @@
+version: '3.5'
+
+services:
+  db-test:
+    container_name: db-test
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=admin
+    image: postgres:16.1-alpine
+
+  cloud-service-app:
+    container_name: cloud-service-server
+    image: 'cloud-service-app:latest'
+    environment:
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db-test
